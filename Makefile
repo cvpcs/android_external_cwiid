@@ -9,7 +9,7 @@ ifdef PYTHON
 BIND_DIRS = python
 endif
 
-SUB_DIRS = $(LIB_DIRS) $(BIN_DIRS) $(DOC_DIRS) $(BIND_DIRS) wmdemo
+SUB_DIRS = $(LIB_DIRS) $(BIN_DIRS) $(DOC_DIRS) $(BIND_DIRS)
 
 all install clean distclean uninstall: TARGET += $(MAKECMDGOALS)
 
@@ -17,7 +17,7 @@ all install clean distclean uninstall: $(BIN_DIRS) $(LIB_DIRS) $(BIND_DIRS)
 
 install uninstall distclean: $(DOC_DIRS)
 
-all clean distclean: wmdemo
+all clean distclean:
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(MAKECMDGOALS),distclean)
