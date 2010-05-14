@@ -7,8 +7,10 @@ LOCAL_SRC_FILES:= \
 	process.c state.c \
 	thread.c util.c
 LOCAL_C_INCLUDES += \
-	external/bluetooth/bluez/include
+	external/bluetooth/bluez/include \
+	external/cwiid/common/include
 LOCAL_CFLAGS += \
+	-DHAVE_CONFIG_H \
 	-DPTHREAD_CANCEL_ENABLE=0 \
 	-DPTHREAD_CANCEL_DISABLE=1 \
 	-DPTHREAD_CANCELED=0
