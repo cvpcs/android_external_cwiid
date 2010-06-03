@@ -7,8 +7,8 @@ LOCAL_SRC_FILES:= \
 	conf.c action_enum.c
 LOCAL_C_INCLUDES += \
 	external/bluetooth/bluez/include \
-	external/cwiid/libcwiid \
-	external/cwiid/common/include
+	$(LOCAL_PATH)/../libcwiid \
+	$(LOCAL_PATH)/../common/include
 LOCAL_CFLAGS += -DHAVE_CONFIG_H
 LOCAL_SHARED_LIBRARIES += libcwiid libdl
 LOCAL_PRELINK_MODULE := false

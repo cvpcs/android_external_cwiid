@@ -7,9 +7,9 @@ LOCAL_SRC_FILES:= \
 	main.c
 LOCAL_C_INCLUDES += \
 	external/bluetooth/bluez/include \
-	external/cwiid/common/include \
-	external/cwiid/libcwiid \
-	external/cwiid/libwminput
+	$(LOCAL_PATH)/../common/include \
+	$(LOCAL_PATH)/../libcwiid \
+	$(LOCAL_PATH)/../libwminput
 LOCAL_CFLAGS += \
 	-DWMINPUT_CONFIG_DIR=\"/system/etc/cwiid/wminput\" \
 	-DCWIID_PLUGINS_DIR=\"/system/lib/cwiid/plugins\" \
