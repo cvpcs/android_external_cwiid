@@ -15,6 +15,7 @@ LOCAL_CFLAGS += \
 	-DCWIID_PLUGINS_DIR=\"/system/lib/cwiid/plugins\" \
 	-DHAVE_CONFIG_H
 LOCAL_SHARED_LIBRARIES += libcwiid libdl libwminput
+LOCAL_STATIC_LIBRARIES += libcutils
 LOCAL_MODULE := wminput
 LOCAL_MODULE_PATH := $(TARGET_OUT_OPTIONAL_EXECUTABLES)
 include $(BUILD_EXECUTABLE)

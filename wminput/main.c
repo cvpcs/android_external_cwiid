@@ -77,6 +77,8 @@
 
 #include <cwiid.h>
 
+#include <cutils/properties.h>
+
 #include "conf.h"
 #include "util.h"
 #include "wmplugin.h"
@@ -101,6 +103,18 @@ cwiid_wiimote_t *wiimote;
 char init;
 
 #define DEFAULT_CONFIG_FILE	"default"
+
+#ifndef CWIID_STATE_SYSTEM_PROP
+#define CWIID_STATE_SYSTEM_PROP	"service.gem.cwiid.status"
+#endif
+
+#define CWIID_STATE_INITIALIZING 	"initializing"
+#define CWIID_STATE_DISCOVERING		"discovering"
+#define CWIID_STATE_READY		"ready"
+#define CWIID_STATE_RECONNECTING	"reconnecting"
+#define CWIID_STATE_STOPPING		"stopping"
+#define CWIID_STATE_STOPPED		"stopped"
+#define CWIID_STATE_ERROR		"error"
 
 #define HOME_DIR_LEN	128
 
@@ -129,7 +143,7 @@ void cwiid_err_connect(struct wiimote *wiimote, const char *str, va_list ap)
 
 int main(int argc, char *argv[])
 {
-	char wait_forever = 0, quiet = 0, reconnect = 0, reconnect_wait = 0;
+	char wait_forever = 0, quiet = 0, reconnect = 0, reconnect_wait = 0, daemon = 0;
 	char *config_search_dirs[3], *plugin_search_dirs[3];
 	char *config_filename = DEFAULT_CONFIG_FILE;
 	char home_config_dir[HOME_DIR_LEN];
@@ -185,6 +199,7 @@ int main(int argc, char *argv[])
 			wait_forever = 1;
 			quiet = 1;
 			reconnect = 1;
+			daemon = 1;
 			break;
 		case 'q':
 			quiet = 1;
@@ -212,13 +227,19 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	if (daemon) {
+		property_set(CWIID_STATE_SYSTEM_PROP, CWIID_STATE_INITIALIZING);
+	}
+
 	if (c_init()) {
-		return -1;
+		ret = -1;
+		goto end;
 	}
 
 #ifdef HAVE_PYTHON
 	if (py_init()) {
-		return -1;
+		ret = -1;
+		goto end;
 	}
 #endif
 
@@ -242,7 +263,8 @@ int main(int argc, char *argv[])
 
 	if (conf_load(&conf, config_filename, config_search_dirs,
 	  plugin_search_dirs)) {
-		return -1;
+		ret = -1;
+		goto end;
 	}
 
 	/* Determine BDADDR */
@@ -257,7 +279,8 @@ int main(int argc, char *argv[])
 			wminput_err("invalid command-line");
 			print_usage();
 			conf_unload(&conf);
-			return -1;
+			ret = -1;
+			goto end;
 		}
 	}
 	else if ((str_addr = getenv(WIIMOTE_BDADDR)) != NULL) {
@@ -282,12 +305,16 @@ int main(int argc, char *argv[])
 		if (!quiet) {
 			printf("Put Wiimote in discoverable mode now (press 1+2)...\n");
 		}
+		if (daemon) {
+			property_set(CWIID_STATE_SYSTEM_PROP, CWIID_STATE_DISCOVERING);
+		}
 		if (wait_forever) {
 			if (!bacmp(&current_bdaddr, BDADDR_ANY)) {
 				if (cwiid_find_wiimote(&current_bdaddr, -1)) {
 					wminput_err("error finding wiimote");
 					conf_unload(&conf);
-					return -1;
+					ret = -1;
+					goto end;
 				}
 			}
 			/* TODO: avoid continuously calling cwiid_open */
@@ -299,23 +326,27 @@ int main(int argc, char *argv[])
 			if ((wiimote = cwiid_open(&current_bdaddr, CWIID_FLAG_MESG_IFC)) == NULL) {
 				wminput_err("unable to connect");
 				conf_unload(&conf);
-				return -1;
+				ret = -1;
+				goto end;
 			}
 		}
 		if (cwiid_set_mesg_callback(wiimote, &cwiid_callback)) {
 			wminput_err("error setting callback");
 			conf_unload(&conf);
-			return -1;
+			ret = -1;
+			goto end;
 		}
 
 		if (c_wiimote(wiimote)) {
 			conf_unload(&conf);
-			return -1;
+			ret = -1;
+			goto end;
 		}
 #ifdef HAVE_PYTHON
 		if (py_wiimote(wiimote)) {
 			conf_unload(&conf);
-			return -1;
+			ret = -1;
+			goto end;
 		}
 #endif
 
@@ -327,7 +358,8 @@ int main(int argc, char *argv[])
 					wminput_err("error on %s init", conf.plugins[i].name);
 					conf_unload(&conf);
 					cwiid_close(wiimote);
-					return -1;
+					ret = -1;
+					goto end;
 				}
 				break;
 #ifdef HAVE_PYTHON
@@ -336,7 +368,8 @@ int main(int argc, char *argv[])
 					wminput_err("error %s init", conf.plugins[i].name);
 					conf_unload(&conf);
 					cwiid_close(wiimote);
-					return -1;
+					ret = -1;
+					goto end;
 				}
 				break;
 #endif
@@ -346,7 +379,8 @@ int main(int argc, char *argv[])
 		if (wminput_set_report_mode()) {
 			conf_unload(&conf);
 			cwiid_close(wiimote);
-			return -1;
+			ret = -1;
+			goto end;
 		}
 
 		uinput_listen_data.wiimote = wiimote;
@@ -357,11 +391,15 @@ int main(int argc, char *argv[])
 			wminput_err("error starting uinput listen thread");
 			conf_unload(&conf);
 			cwiid_close(wiimote);
-			return -1;
+			ret = -1;
+			goto end;
 		}
 
 		if (!quiet) {
 			printf("Ready.\n");
+		}
+		if (daemon) {
+			property_set(CWIID_STATE_SYSTEM_PROP, CWIID_STATE_READY);
 		}
 
 		init = 0;
@@ -373,6 +411,14 @@ int main(int argc, char *argv[])
 
 		if ((signum == SIGTERM) || (signum == SIGINT)) {
 			reconnect = 0;
+		}
+
+		if (daemon) {
+			if (reconnect) {
+				property_set(CWIID_STATE_SYSTEM_PROP, CWIID_STATE_RECONNECTING);
+			} else {
+				property_set(CWIID_STATE_SYSTEM_PROP, CWIID_STATE_STOPPING);
+			}
 		}
 
 		if (pthread_cancel(uinput_listen_thread)) {
@@ -413,6 +459,14 @@ int main(int argc, char *argv[])
 		printf("Exiting.\n");
 	}
 
+end:
+	if (daemon) {
+		if (ret < 0) {
+			property_set(CWIID_STATE_SYSTEM_PROP, CWIID_STATE_ERROR);
+		} else {
+			property_set(CWIID_STATE_SYSTEM_PROP, CWIID_STATE_STOPPED);
+		}
+	}
 	return ret;
 }
 
