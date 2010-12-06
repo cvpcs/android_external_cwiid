@@ -105,7 +105,7 @@ char init;
 #define DEFAULT_CONFIG_FILE	"default"
 
 #ifndef CWIID_STATE_SYSTEM_PROP
-#define CWIID_STATE_SYSTEM_PROP	"service.gem.cwiid.status"
+#define CWIID_STATE_SYSTEM_PROP	"gem.cwiid.status"
 #endif
 
 #define CWIID_STATE_INITIALIZING 	"initializing"
