@@ -1,19 +1,40 @@
-# gameport
+# Name: Gamepad
+# Summary: A generic config in which buttons on the device map to keys of similar name and function.
+# Metadata: (ignore below this, it's just the above info in metadata encoding)
+#name=__5HAGEAbQBlAHAAYQBkAA
+#summary=__5BACAAZwBlAG4AZQByAGkAYwAgAGMAbwBuAGYAaQBnACAAaQBuACAAdwBoAGkAYwBoACAAYgB1AHQAdABvAG4AcwAgAG8AbgAgAHQAaABlACAAZABlAHYAaQBjAGUAIABtAGEAcAAgAHQAbwAgAGsAZQB5AHMAIABvAGYAIABzAGkAbQBpAGwAYQByACAAbgBhAG0AZQAgAGEAbgBkACAAZgB1AG4AYwB0AGkAbwBuAC4A
 
-Classic.Dpad.X = ABS_X
-Classic.Dpad.Y = ABS_Y
-Classic.LStick.X = ABS_HAT0X
-Classic.LStick.Y = ABS_HAT0Y
-Classic.RStick.X = ABS_HAT1X
-Classic.RStick.Y = ABS_HAT1Y
-Classic.A = BTN_A
-Classic.B = BTN_B
-Classic.X = BTN_X
-Classic.Y = BTN_Y
-Classic.Minus = BTN_SELECT
-Classic.Plus  = BTN_START
-Classic.Home  = BTN_MODE
-Classic.L  = BTN_TL
-Classic.R  = BTN_TR
-Classic.ZL = BTN_TL2
-Classic.ZR = BTN_TR2
+Wiimote.Up			= KEY_UP
+Wiimote.Left			= KEY_LEFT
+Wiimote.Right			= KEY_RIGHT
+Wiimote.Down			= KEY_DOWN
+Wiimote.A			= KEY_A
+Wiimote.B			= KEY_B
+Wiimote.Minus			= KEY_MINUS
+Wiimote.Home			= KEY_HOME
+Wiimote.Plus			= KEY_PLUS
+Wiimote.1			= KEY_1
+Wiimote.2			= KEY_2
+
+Plugin.nunchuk_stick2btn.Up	= KEY_UP
+Plugin.nunchuk_stick2btn.Left	= KEY_LEFT
+Plugin.nunchuk_stick2btn.Right	= KEY_RIGHT
+Plugin.nunchuk_stick2btn.Down	= KEY_DOWN
+Nunchuk.C			= KEY_C
+Nunchuk.Z			= KEY_Z
+
+Classic.Up			= KEY_UP
+Classic.Left			= KEY_LEFT
+Classic.Right			= KEY_RIGHT
+Classic.Down			= KEY_DOWN
+Classic.Minus			= KEY_MINUS
+Classic.Plus			= KEY_PLUS
+Classic.Home			= KEY_HOME
+Classic.A			= KEY_A
+Classic.B			= KEY_B
+Classic.X			= KEY_X
+Classic.Y			= KEY_Y
+Classic.L			= KEY_L
+Classic.R			= KEY_R
+Classic.ZL			= KEY_V
+Classic.ZR			= KEY_W

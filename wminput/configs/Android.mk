@@ -3,14 +3,15 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 config_files := \
-	acc_led \
-	acc_ptr \
 	buttons \
-	gamepad \
-	ir_ptr \
-	neverball \
-	nunchuk_acc_ptr \
-	nunchuk_stick2btn
+	gamepad
+#	acc_led \
+#	acc_ptr \
+#	ir_ptr \
+#	neverball \
+#	nunchuk_acc_ptr \
+#	nunchuk_stick2btn \
+
 copy_to := $(addprefix $(TARGET_OUT)/etc/cwiid/wminput/,$(config_files))
 copy_from := $(addprefix $(LOCAL_PATH)/,$(config_files))
 
