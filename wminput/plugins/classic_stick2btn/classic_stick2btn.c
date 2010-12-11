@@ -17,6 +17,7 @@
  */
 
 #include "wmplugin.h"
+#include <stdio.h>
 
 /* Button flags */
 #define LEFT_STICK_KEY_UP            0x0001
@@ -28,8 +29,10 @@
 #define RIGHT_STICK_KEY_RIGHT        0x0040
 #define RIGHT_STICK_KEY_LEFT         0x0080
 
-#define STICK_MID_VAL           128
-#define STICK_NEUTRAL           20
+#define LEFT_STICK_MID_VAL           31
+#define LEFT_STICK_NEUTRAL           16
+#define RIGHT_STICK_MID_VAL          16
+#define RIGHT_STICK_NEUTRAL          8
 
 static unsigned char info_init = 0;
 static struct wmplugin_info info;
@@ -95,13 +98,13 @@ static void process_classic(struct cwiid_classic_mesg *mesg)
 	int rsty = mesg->r_stick[CWIID_Y];
 
         data.buttons=0;
-        if (lsty > STICK_MID_VAL+STICK_NEUTRAL) data.buttons |= LEFT_STICK_KEY_UP;
-        if (lsty < STICK_MID_VAL-STICK_NEUTRAL) data.buttons |= LEFT_STICK_KEY_DOWN;
-        if (lstx > STICK_MID_VAL+STICK_NEUTRAL) data.buttons |= LEFT_STICK_KEY_RIGHT;
-        if (lstx < STICK_MID_VAL-STICK_NEUTRAL) data.buttons |= LEFT_STICK_KEY_LEFT;
+        if (lsty > LEFT_STICK_MID_VAL+LEFT_STICK_NEUTRAL) data.buttons |= LEFT_STICK_KEY_UP;
+        if (lsty < LEFT_STICK_MID_VAL-LEFT_STICK_NEUTRAL) data.buttons |= LEFT_STICK_KEY_DOWN;
+        if (lstx > LEFT_STICK_MID_VAL+LEFT_STICK_NEUTRAL) data.buttons |= LEFT_STICK_KEY_RIGHT;
+        if (lstx < LEFT_STICK_MID_VAL-LEFT_STICK_NEUTRAL) data.buttons |= LEFT_STICK_KEY_LEFT;
 
-        if (rsty > STICK_MID_VAL+STICK_NEUTRAL) data.buttons |= RIGHT_STICK_KEY_UP;
-        if (rsty < STICK_MID_VAL-STICK_NEUTRAL) data.buttons |= RIGHT_STICK_KEY_DOWN;
-        if (rstx > STICK_MID_VAL+STICK_NEUTRAL) data.buttons |= RIGHT_STICK_KEY_RIGHT;
-        if (rstx < STICK_MID_VAL-STICK_NEUTRAL) data.buttons |= RIGHT_STICK_KEY_LEFT;
+        if (rsty > RIGHT_STICK_MID_VAL+RIGHT_STICK_NEUTRAL) data.buttons |= RIGHT_STICK_KEY_UP;
+        if (rsty < RIGHT_STICK_MID_VAL-RIGHT_STICK_NEUTRAL) data.buttons |= RIGHT_STICK_KEY_DOWN;
+        if (rstx > RIGHT_STICK_MID_VAL+RIGHT_STICK_NEUTRAL) data.buttons |= RIGHT_STICK_KEY_RIGHT;
+        if (rstx < RIGHT_STICK_MID_VAL-RIGHT_STICK_NEUTRAL) data.buttons |= RIGHT_STICK_KEY_LEFT;
 }
