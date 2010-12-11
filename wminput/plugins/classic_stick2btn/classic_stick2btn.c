@@ -17,7 +17,6 @@
  */
 
 #include "wmplugin.h"
-#include <stdio.h>
 
 /* Button flags */
 #define LEFT_STICK_KEY_UP            0x0001
