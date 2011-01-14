@@ -8,9 +8,15 @@ static unsigned char info_init = 0;
 static struct wmplugin_info info;
 static struct wmplugin_data data;
 
+#ifndef CWIID_STATIC
 wmplugin_info_t wmplugin_info;
 wmplugin_init_t wmplugin_init;
 wmplugin_exec_t wmplugin_exec;
+#else
+wmplugin_info_t wmplugin_info_led;
+wmplugin_init_t wmplugin_init_led;
+wmplugin_exec_t wmplugin_exec_led;
+#endif
 
 static int Led1 = 0;
 static int Led2 = 0;
@@ -21,7 +27,11 @@ static uint8_t Button = CWIID_BTN_A + CWIID_BTN_B;
 
 static void show_battery();
 
+#ifndef CWIID_STATIC
 struct wmplugin_info *wmplugin_info()
+#else
+struct wmplugin_info *wmplugin_info_led()
+#endif
 {
         if (!info_init) {
                 info.button_count = 0;
@@ -50,7 +60,11 @@ struct wmplugin_info *wmplugin_info()
         return &info;
 }
 
+#ifndef CWIID_STATIC
 int wmplugin_init(int id, cwiid_wiimote_t *arg_wiimote)
+#else
+int wmplugin_init_led(int id, cwiid_wiimote_t *arg_wiimote)
+#endif
 {
         wiimote = arg_wiimote;
 
@@ -68,7 +82,11 @@ int wmplugin_init(int id, cwiid_wiimote_t *arg_wiimote)
         return 0;
 }
 
+#ifndef CWIID_STATIC
 struct wmplugin_data *wmplugin_exec(int mesg_count, union cwiid_mesg mesg[])
+#else
+struct wmplugin_data *wmplugin_exec_led(int mesg_count, union cwiid_mesg mesg[])
+#endif
 {
         int i;
         uint8_t button;

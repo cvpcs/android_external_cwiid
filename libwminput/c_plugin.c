@@ -24,7 +24,9 @@
 
 #include <stdlib.h>
 
+#ifndef CWIID_STATIC
 #include <dlfcn.h>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -68,6 +70,8 @@ void c_deinit(void)
 }
 
 #define PLUGIN_PATHNAME_LEN	128
+
+#ifndef CWIID_STATIC
 int c_plugin_open(struct plugin *plugin, char *dir)
 {
 	char pathname[PLUGIN_PATHNAME_LEN];
@@ -83,7 +87,6 @@ int c_plugin_open(struct plugin *plugin, char *dir)
 		wminput_err(dlerror());
 		return -1;
 	}
-
 	plugin->type = PLUGIN_C;
 	if (!(plugin->p = malloc(sizeof(struct c_plugin)))) {
 		wminput_err("malloc error");
@@ -118,13 +121,45 @@ int c_plugin_open(struct plugin *plugin, char *dir)
 	}
 
 	((struct c_plugin *)plugin->p)->handle = handle;
+	return 0;
+}
+#else
+int c_plugin_open(struct plugin *plugin, wmplugin_info_t *info, wmplugin_init_t *init, wmplugin_exec_t *exec)
+{
+	char pathname[PLUGIN_PATHNAME_LEN];
+	struct stat buf;
+
+	plugin->type = PLUGIN_C;
+	if (!(plugin->p = malloc(sizeof(struct c_plugin)))) {
+		wminput_err("malloc error");
+		return -1;
+	}
+	if (!(plugin->info = (*(wmplugin_info_t *)info)())) {
+		wminput_err("Invalid plugin info from %s", plugin->name);
+		free(plugin->p);
+		return -1;
+	}
+	if (!(((struct c_plugin *)plugin->p)->init = init)) {
+		wminput_err("Unable to load plugin init function: %s", dlerror());
+		free(plugin->p);
+		return -1;
+	}
+	if (!(((struct c_plugin *)plugin->p)->exec = exec)) {
+		wminput_err("Unable to load plugin exec function: %s", dlerror());
+		free(plugin->p);
+		return -1;
+	}
+	((struct c_plugin *)plugin->p)->handle = NULL;
 
 	return 0;
 }
+#endif
 
 void c_plugin_close(struct plugin *plugin)
 {
+#ifndef CWIID_STATIC
 	dlclose(((struct c_plugin *)plugin->p)->handle);
+#endif
 	free(plugin->p);
 }
 

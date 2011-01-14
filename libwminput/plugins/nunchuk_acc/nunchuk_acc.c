@@ -56,9 +56,15 @@ static cwiid_wiimote_t *wiimote;
 static struct acc_cal acc_cal;
 static int plugin_id;
 
+#ifndef CWIID_STATIC
 wmplugin_info_t wmplugin_info;
 wmplugin_init_t wmplugin_init;
 wmplugin_exec_t wmplugin_exec;
+#else
+wmplugin_info_t wmplugin_info_nunchuk_acc;
+wmplugin_init_t wmplugin_init_nunchuk_acc;
+wmplugin_exec_t wmplugin_exec_nunchuk_acc;
+#endif
 static void process_nunchuk(struct cwiid_nunchuk_mesg *mesg);
 
 static float Roll_Scale = 1.0;
@@ -66,7 +72,11 @@ static float Pitch_Scale = 1.0;
 static float X_Scale = 1.0;
 static float Y_Scale = 1.0;
 
+#ifndef CWIID_STATIC
 struct wmplugin_info *wmplugin_info() {
+#else
+struct wmplugin_info *wmplugin_info_nunchuk_acc() {
+#endif
 	if (!info_init) {
 		info.button_count = 0;
 		info.axis_count = 4;
@@ -112,7 +122,11 @@ struct wmplugin_info *wmplugin_info() {
 	return &info;
 }
 
+#ifndef CWIID_STATIC
 int wmplugin_init(int id, cwiid_wiimote_t *arg_wiimote)
+#else
+int wmplugin_init_nunchuk_acc(int id, cwiid_wiimote_t *arg_wiimote)
+#endif
 {
 	plugin_id = id;
 	wiimote = arg_wiimote;
@@ -126,7 +140,11 @@ int wmplugin_init(int id, cwiid_wiimote_t *arg_wiimote)
 	return 0;
 }
 
+#ifndef CWIID_STATIC
 struct wmplugin_data *wmplugin_exec(int mesg_count, union cwiid_mesg mesg[])
+#else
+struct wmplugin_data *wmplugin_exec_nunchuk_acc(int mesg_count, union cwiid_mesg mesg[])
+#endif
 {
 	int i;
 	enum cwiid_ext_type ext_type = CWIID_EXT_NONE;
@@ -157,7 +175,7 @@ struct wmplugin_data *wmplugin_exec(int mesg_count, union cwiid_mesg mesg[])
 
 #define NEW_AMOUNT 0.1
 #define OLD_AMOUNT (1.0-NEW_AMOUNT)
-double a_x = 0, a_y = 0, a_z = 0;
+static double a_x = 0, a_y = 0, a_z = 0;
 
 static void process_nunchuk(struct cwiid_nunchuk_mesg *mesg)
 {

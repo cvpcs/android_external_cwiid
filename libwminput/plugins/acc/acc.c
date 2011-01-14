@@ -57,9 +57,15 @@ static struct acc_cal acc_cal;
 
 static int plugin_id;
 
+#ifndef CWIID_STATIC
 wmplugin_info_t wmplugin_info;
 wmplugin_init_t wmplugin_init;
 wmplugin_exec_t wmplugin_exec;
+#else
+wmplugin_info_t wmplugin_info_acc;
+wmplugin_init_t wmplugin_init_acc;
+wmplugin_exec_t wmplugin_exec_acc;
+#endif
 static void process_acc(struct cwiid_acc_mesg *mesg);
 
 static float Roll_Scale = 1.0;
@@ -67,7 +73,11 @@ static float Pitch_Scale = 1.0;
 static float X_Scale = 1.0;
 static float Y_Scale = 1.0;
 
+#ifndef CWIID_STATIC
 struct wmplugin_info *wmplugin_info() {
+#else
+struct wmplugin_info *wmplugin_info_acc() {
+#endif
 	if (!info_init) {
 		info.button_count = 0;
 		info.axis_count = 4;
@@ -113,7 +123,11 @@ struct wmplugin_info *wmplugin_info() {
 	return &info;
 }
 
+#ifndef CWIID_STATIC
 int wmplugin_init(int id, cwiid_wiimote_t *wiimote)
+#else
+int wmplugin_init_acc(int id, cwiid_wiimote_t *wiimote)
+#endif
 {
 	plugin_id = id;
 
@@ -132,7 +146,11 @@ int wmplugin_init(int id, cwiid_wiimote_t *wiimote)
 	return 0;
 }
 
+#ifndef CWIID_STATIC
 struct wmplugin_data *wmplugin_exec(int mesg_count, union cwiid_mesg mesg[])
+#else
+struct wmplugin_data *wmplugin_exec_acc(int mesg_count, union cwiid_mesg mesg[])
+#endif
 {
 	int i;
 	struct wmplugin_data *ret = NULL;
@@ -153,7 +171,7 @@ struct wmplugin_data *wmplugin_exec(int mesg_count, union cwiid_mesg mesg[])
 
 #define NEW_AMOUNT 0.1
 #define OLD_AMOUNT (1.0-NEW_AMOUNT)
-double a_x = 0, a_y = 0, a_z = 0;
+static double a_x = 0, a_y = 0, a_z = 0;
 
 static void process_acc(struct cwiid_acc_mesg *mesg)
 {
