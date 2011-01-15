@@ -140,12 +140,12 @@ int c_plugin_open(struct plugin *plugin, wmplugin_info_t *info, wmplugin_init_t 
 		return -1;
 	}
 	if (!(((struct c_plugin *)plugin->p)->init = init)) {
-		wminput_err("Unable to load plugin init function: %s", dlerror());
+		wminput_err("Unable to load plugin init function");
 		free(plugin->p);
 		return -1;
 	}
 	if (!(((struct c_plugin *)plugin->p)->exec = exec)) {
-		wminput_err("Unable to load plugin exec function: %s", dlerror());
+		wminput_err("Unable to load plugin exec function");
 		free(plugin->p);
 		return -1;
 	}
