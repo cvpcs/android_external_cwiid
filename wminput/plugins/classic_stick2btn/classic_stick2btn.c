@@ -37,22 +37,12 @@ static unsigned char info_init = 0;
 static struct wmplugin_info info;
 static struct wmplugin_data data;
 
-#ifndef CWIID_STATIC
 wmplugin_info_t wmplugin_info;
 wmplugin_init_t wmplugin_init;
 wmplugin_exec_t wmplugin_exec;
-#else
-wmplugin_info_t wmplugin_info_classic_stick2btn;
-wmplugin_init_t wmplugin_init_classic_stick2btn;
-wmplugin_exec_t wmplugin_exec_classic_stick2btn;
-#endif
 static void process_classic(struct cwiid_classic_mesg *mesg);
 
-#ifndef CWIID_STATIC
 struct wmplugin_info *wmplugin_info() {
-#else
-struct wmplugin_info *wmplugin_info_classic_stick2btn() {
-#endif
         if (!info_init) {
                 info.button_count = 8;
                 info.button_info[0].name = "LStick_Up";
@@ -69,11 +59,7 @@ struct wmplugin_info *wmplugin_info_classic_stick2btn() {
         return &info;
 }
 
-#ifndef CWIID_STATIC
 int wmplugin_init(int id, cwiid_wiimote_t *arg_wiimote)
-#else
-int wmplugin_init_classic_stick2btn(int id, cwiid_wiimote_t *arg_wiimote)
-#endif
 {
         data.buttons = 0;
         if (wmplugin_set_rpt_mode(id, CWIID_RPT_CLASSIC)) {
@@ -83,11 +69,7 @@ int wmplugin_init_classic_stick2btn(int id, cwiid_wiimote_t *arg_wiimote)
         return 0;
 }
 
-#ifndef CWIID_STATIC
 struct wmplugin_data *wmplugin_exec(int mesg_count, union cwiid_mesg mesg[])
-#else
-struct wmplugin_data *wmplugin_exec_classic_stick2btn(int mesg_count, union cwiid_mesg mesg[])
-#endif
 {
         int i;
         struct wmplugin_data *ret = NULL;

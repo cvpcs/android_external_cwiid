@@ -29,11 +29,7 @@ int c_init(void);
 int c_wiimote(cwiid_wiimote_t *wiimote);
 void c_wiimote_deinit(void);
 void c_deinit(void);
-#ifndef CWIID_STATIC
 int c_plugin_open(struct plugin *plugin, char *dir);
-#else
-int c_plugin_open(struct plugin *plugin, wmplugin_info_t *info, wmplugin_init_t *init, wmplugin_exec_t *exec);
-#endif
 void c_plugin_close(struct plugin *plugin);
 int c_plugin_init(struct plugin *plugin, int id);
 int c_plugin_exec(struct plugin *plugin, int mesg_count,

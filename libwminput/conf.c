@@ -65,27 +65,6 @@
 #include "py_plugin.h"
 #endif
 
-#ifdef CWIID_STATIC
-extern wmplugin_info_t wmplugin_info_acc;
-extern wmplugin_init_t wmplugin_init_acc;
-extern wmplugin_exec_t wmplugin_exec_acc;
-extern wmplugin_info_t wmplugin_info_classic_stick2btn;
-extern wmplugin_init_t wmplugin_init_classic_stick2btn;
-extern wmplugin_exec_t wmplugin_exec_classic_stick2btn;
-extern wmplugin_info_t wmplugin_info_ir_ptr;
-extern wmplugin_init_t wmplugin_init_ir_ptr;
-extern wmplugin_exec_t wmplugin_exec_ir_ptr;
-extern wmplugin_info_t wmplugin_info_led;
-extern wmplugin_init_t wmplugin_init_led;
-extern wmplugin_exec_t wmplugin_exec_led;
-extern wmplugin_info_t wmplugin_info_nunchuk_acc;
-extern wmplugin_init_t wmplugin_init_nunchuk_acc;
-extern wmplugin_exec_t wmplugin_exec_nunchuk_acc;
-extern wmplugin_info_t wmplugin_info_nunchuk_stick2btn;
-extern wmplugin_init_t wmplugin_init_nunchuk_stick2btn;
-extern wmplugin_exec_t wmplugin_exec_nunchuk_stick2btn;
-#endif
-
 extern FILE *yyin;
 extern int yyparse();
 
@@ -631,7 +610,6 @@ struct plugin *get_plugin(struct conf *conf, const char *name)
 	plugin = &conf->plugins[i];
 	plugin->name = (char *)name;
 
-#ifndef CWIID_STATIC
 	for (i=0; conf->plugin_search_dirs[i]; i++) {
 		if (!c_plugin_open(plugin, conf->plugin_search_dirs[i])) {
 			plugin_found = 1;
@@ -644,52 +622,6 @@ struct plugin *get_plugin(struct conf *conf, const char *name)
 		}
 #endif
 	}
-#else
-	// we need to check individually for plugins
-	if(strcmp(plugin->name, "acc") == 0) {
-		if (!c_plugin_open(plugin,
-				&wmplugin_info_acc,
-				&wmplugin_init_acc,
-				&wmplugin_exec_acc)) {
-			plugin_found = 1;
-		}
-	} else if(strcmp(plugin->name, "classic_stick2btn") == 0) {
-		if (!c_plugin_open(plugin,
-				&wmplugin_info_classic_stick2btn,
-				&wmplugin_init_classic_stick2btn,
-				&wmplugin_exec_classic_stick2btn)) {
-			plugin_found = 1;
-		}
-	} else if(strcmp(plugin->name, "ir_ptr") == 0) {
-		if (!c_plugin_open(plugin,
-				&wmplugin_info_ir_ptr,
-				&wmplugin_init_ir_ptr,
-				&wmplugin_exec_ir_ptr)) {
-			plugin_found = 1;
-		}
-	} else if(strcmp(plugin->name, "led") == 0) {
-		if (!c_plugin_open(plugin,
-				&wmplugin_info_led,
-				&wmplugin_init_led,
-				&wmplugin_exec_led)) {
-			plugin_found = 1;
-		}
-	} else if(strcmp(plugin->name, "nunchuk_acc") == 0) {
-		if (!c_plugin_open(plugin,
-				&wmplugin_info_nunchuk_acc,
-				&wmplugin_init_nunchuk_acc,
-				&wmplugin_exec_nunchuk_acc)) {
-			plugin_found = 1;
-		}
-	} else if(strcmp(plugin->name, "nunchuk_stick2btn") == 0) {
-		if (!c_plugin_open(plugin,
-				&wmplugin_info_nunchuk_stick2btn,
-				&wmplugin_init_nunchuk_stick2btn,
-				&wmplugin_exec_nunchuk_stick2btn)) {
-			plugin_found = 1;
-		}
-	}
-#endif
 
 	if (!plugin_found) {
 		wminput_err("Plugin not found: %s", name);

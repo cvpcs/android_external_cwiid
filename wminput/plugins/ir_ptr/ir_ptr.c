@@ -59,21 +59,11 @@ cwiid_wiimote_t *wiimote;
 static struct wmplugin_info info;
 static struct wmplugin_data data;
 
-#ifndef CWIID_STATIC
 wmplugin_info_t wmplugin_info;
 wmplugin_init_t wmplugin_init;
 wmplugin_exec_t wmplugin_exec;
-#else
-wmplugin_info_t wmplugin_info_ir_ptr;
-wmplugin_init_t wmplugin_init_ir_ptr;
-wmplugin_exec_t wmplugin_exec_ir_ptr;
-#endif
 
-#ifndef CWIID_STATIC
 struct wmplugin_info *wmplugin_info() {
-#else
-struct wmplugin_info *wmplugin_info_ir_ptr() {
-#endif
 	static unsigned char info_init = 0;
 
 	if (!info_init) {
@@ -97,11 +87,7 @@ struct wmplugin_info *wmplugin_info_ir_ptr() {
 	return &info;
 }
 
-#ifndef CWIID_STATIC
 int wmplugin_init(int id, cwiid_wiimote_t *arg_wiimote)
-#else
-int wmplugin_init_ir_ptr(int id, cwiid_wiimote_t *arg_wiimote)
-#endif
 {
 	wiimote = arg_wiimote;
 
@@ -114,11 +100,7 @@ int wmplugin_init_ir_ptr(int id, cwiid_wiimote_t *arg_wiimote)
 	return 0;
 }
 
-#ifndef CWIID_STATIC
 struct wmplugin_data *wmplugin_exec(int mesg_count, union cwiid_mesg mesg[])
-#else
-struct wmplugin_data *wmplugin_exec_ir_ptr(int mesg_count, union cwiid_mesg mesg[])
-#endif
 {
 	static int src_index = -1;
 	static int debounce = 0;
