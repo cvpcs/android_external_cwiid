@@ -102,9 +102,7 @@ void process_plugin(struct plugin *, int, union cwiid_mesg []);
 cwiid_wiimote_t *wiimote;
 char init;
 
-#ifndef DEFAULT_CONFIG_FILE
 #define DEFAULT_CONFIG_FILE	"default"
-#endif
 
 #ifndef CWIID_STATE_SYSTEM_PROP
 #define CWIID_STATE_SYSTEM_PROP	"gem.cwiid.status"
