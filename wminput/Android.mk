@@ -33,11 +33,11 @@ LOCAL_CFLAGS += \
 	-DCWIID_STATE_SYSTEM_PROP=\"sys.cwiid.status\" \
 	-DDEFAULT_CONFIG_FILE=\".autopreset\" \
 	-DCWIID_STATIC
-LOCAL_STATIC_LIBRARIES += libcwiid libwminput libbluetooth libcutils libm libc
+LOCAL_STATIC_LIBRARIES += libcwiid libwminput libcutils libm
+LOCAL_SHARED_LIBRARIES += libbluetooth
 LOCAL_MODULE := utility_wminput
 LOCAL_MODULE_TAGS := eng
 LOCAL_MODULE_PATH := $(PRODUCT_OUT)/utilities
 LOCAL_UNSTRIPPED_PATH := $(PRODUCT_OUT)/symbols/utilities
 LOCAL_MODULE_STEM := wminput
-LOCAL_FORCE_STATIC_EXECUTABLE := true
 include $(BUILD_EXECUTABLE)
